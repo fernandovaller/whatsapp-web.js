@@ -4,6 +4,7 @@ const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { Server } = require('socket.io');
 const axios = require('axios');
+const qrcode = require('qrcode');
 
 const port = process.env.PORT || 8000;
 
