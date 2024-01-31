@@ -34,7 +34,8 @@ app.get('/', (req, res) => {
 });
 
 client.on('message', async msg => {
-    console.log('MESSAGE RECEIVED', msg);
+
+    // console.log('MESSAGE RECEIVED', msg);
 
     if (msg.body === '!info') {
         let info = client.info;
@@ -109,7 +110,7 @@ const registrarLog = function (chanel = 'DEBUG', message, data = null) {
 
     row += '\n';
 
-    fs.appendFile(filePath, row, (err) => {
+    fs.appendFileSync(filePath, row, (err) => {
         if (err) {
             console.error('Erro ao registrar o log:', err);
         }
@@ -175,7 +176,12 @@ app.post('/send-media', async (req, res) => {
         registrarLog('success', '[send-media] File sent by whatsapp');
         res.status(200).json({
             status: true,
-            response: response
+            response: {
+                'number': number,
+                'caption': caption,
+                'fileUrl': fileUrl,
+                'mimetype': mimetype
+            }
         });
     }).catch(err => {
         registrarLog('error', '[send-media] Error when file sent by whatsapp', { err });
