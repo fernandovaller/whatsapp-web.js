@@ -4,6 +4,7 @@ const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { Server } = require('socket.io');
 const axios = require('axios');
+const fs = require('fs');
 
 const port = process.env.PORT || 8000;
 
@@ -42,10 +43,34 @@ const phoneNumberFormatter = function (number) {
     return formatted;
 }
 
+const registrarLog = function (chanel = 'DEBUG', message, data = null) {
+    const filePath = join(__dirname, '/data/app.log');
+
+    let chanelName = chanel.toUpperCase();
+
+    let datetime = new Date().toISOString();
+
+    let row = `[${datetime}] app.${chanelName}: ${message}`;
+
+    if (data !== null) {
+        row += ` ${JSON.stringify(data, null, 0)}`;
+    }
+
+    row += '\n';
+
+    fs.appendFile(filePath, row, (err) => {
+        if (err) {
+            console.error('Erro ao registrar o log:', err);
+        }
+    });
+}
+
 app.post('/send-media', async (req, res) => {
     const number = phoneNumberFormatter(req.body.number);
     const caption = req.body.caption;
     const fileUrl = req.body.file;
+
+    registrarLog('info', 'Dados da request recebidos.', { number, caption, fileUrl });
 
     // const media = MessageMedia.fromFilePath('./image-example.png');
     // const file = req.files.file;
@@ -55,11 +80,13 @@ app.post('/send-media', async (req, res) => {
         responseType: 'arraybuffer'
     }).then(response => {
         mimetype = response.headers['content-type'];
-        return response.data.toString('base64');        
+        return response.data.toString('base64');
     });
 
     console.log('mimetype', mimetype);
-    console.log('attachment', attachment);
+    // console.log('attachment', attachment);
+
+    registrarLog('info', 'Arquivo transformado em base64.', { mimetype, attachment });
 
     res.status(200).json({
         status: true,
