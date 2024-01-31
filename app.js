@@ -13,6 +13,9 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
+server.setMaxListeners(0);
+io.setMaxListeners(0);
+
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
