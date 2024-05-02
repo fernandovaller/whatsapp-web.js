@@ -1,4 +1,5 @@
-const { Client, MessageMedia, Location, List, Buttons, LocalAuth } = require('./index');
+const { Client, MessageMedia, LocalAuth } = require('./index');
+// const { Client, MessageMedia, LocalAuth } = require('whatsapp-web.js');
 const express = require('express');
 const { createServer } = require('node:http');
 const { join } = require('node:path');
@@ -22,6 +23,10 @@ app.use(express.urlencoded({
 }));
 
 const client = new Client({
+    webVersionCache: {                
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2413.51-beta.html',
+        type: 'remote'
+    },
     authStrategy: new LocalAuth(),
     // proxyAuthentication: { username: 'username', password: 'password' },
     puppeteer: {
